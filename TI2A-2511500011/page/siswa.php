@@ -51,9 +51,11 @@ if (isset($_GET['action'])) {
                     <tbody>
                         <?php
                         $no = 0;
-                        $query = mysqli_query($koneksi, "SELECT siswa.nis, siswa.nm_siswa, siswa.jenkel, siswa.hp, kelas.nm_kelas FROM siswa join kelas on siswa.id_kelas = kelas.id_kelas");
-                        while ($result = mysqli_fetch_array($query)) {
-                            $no++;
+                        $query = mysqli_query($koneksi, "SELECT siswa.nis, siswa.nm_siswa, siswa.jenkel, siswa.hp, kelas.nm_kelas FROM siswa JOIN kelas ON siswa.id_kelas = kelas.id_kelas");
+
+                        if ($query) {
+                            while ($result = mysqli_fetch_array($query)) {
+                                $no++;
                         ?>
                             <tr>
                                 <td><?= $no; ?></td>
@@ -70,6 +72,14 @@ if (isset($_GET['action'])) {
                                     <a href="index.php?page=edit_siswa&kd=<?= $result['nis']; ?>">
                                         <span class="badge badge-warning">Edit</span>
                                     </a>
+                                </td>
+                            </tr>
+                        <?php }
+                        } else {
+                        ?>
+                            <tr>
+                                <td colspan="7" class="text-center text-danger">
+                                    Query error: <?= mysqli_error($koneksi); ?>
                                 </td>
                             </tr>
                         <?php } ?>

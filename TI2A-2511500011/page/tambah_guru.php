@@ -9,6 +9,8 @@
 </div>
 
 <?php
+$errorMessage = '';
+
 // Kode otomatis
 $carikode = mysqli_query($koneksi, "SELECT MAX(kd_guru) FROM guru") or die(mysqli_error($koneksi));
 $datakode = mysqli_fetch_array($carikode);
@@ -26,31 +28,36 @@ $_SESSION["KODE"] = $hasilkode;
 
 // Proses simpan
 if (isset($_POST['tambah'])) {
-    $kd_guru = $_POST['kd_guru'];
-    $nm_guru = $_POST['nm_guru'];
-    $jenkel = $_POST['jenkel'];
-    $pend_terakhir = $_POST['pend_terakhir'];
-    $hp = $_POST['hp'];
-    $alamat = $_POST['alamat'];
+    $kd_guru = trim($_POST['kd_guru']);
+    $nm_guru = trim($_POST['nm_guru']);
+    $jenkel = trim($_POST['jenkel']);
+    $pend_terakhir = trim($_POST['pend_terakhir']);
+    $hp = trim($_POST['hp']);
+    $alamat = trim($_POST['alamat']);
 
-    $insert = mysqli_query($koneksi, "INSERT INTO guru VALUES ('$kd_guru', '$nm_guru', '$jenkel', '$pend_terakhir', '$hp', '$alamat')");
-    $insertUser = mysqli_query($koneksi, "INSERT INTO users (username, password, role) VALUES ('$kd_guru', '1234', 'guru')");
-
-    if ($insert) {
-        echo '
-        <div class="alert alert-info alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Berhasil Disimpan</h4>
-        </div>';
-        echo '<meta http-equiv="refresh" content="1;url=index.php?page=guru">';
+    if ($nm_guru === '' || $jenkel === '' || $pend_terakhir === '' || $hp === '' || $alamat === '') {
+        $errorMessage = 'Semua field harus diisi.';
     } else {
-        echo '
-        <div class="alert alert-warning alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Gagal Disimpan</h4>
-        </div>';
+        $insert = mysqli_query($koneksi, "INSERT INTO guru (kd_guru, nm_guru, jenkel, pend_terakhir, hp, alamat) VALUES ('$kd_guru', '$nm_guru', '$jenkel', '$pend_terakhir', '$hp', '$alamat')");
+
+        if ($insert) {
+            $insertUser = mysqli_query($koneksi, "INSERT INTO users (username, password, role) VALUES ('$kd_guru', '1234', 'guru')");
+
+            if (!$insertUser) {
+                $errorMessage = 'Gagal membuat pengguna: ' . mysqli_error($koneksi);
+            } else {
+                echo '
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">X</button>
+                    <h5><i class="icon fas fa-info"></i> Info</h5>
+                    <h4>Berhasil Disimpan</h4>
+                </div>';
+                echo '<meta http-equiv="refresh" content="1;url=index.php?page=guru">';
+                exit;
+            }
+        } else {
+            $errorMessage = 'Gagal Disimpan: ' . mysqli_error($koneksi);
+        }
     }
 }
 ?>
@@ -121,6 +128,14 @@ if (isset($_POST['tambah'])) {
                             placeholder="Alamat" 
                             class="form-control">
                     </div>
+
+                    <?php if (!empty($errorMessage)) : ?>
+                        <div class="alert alert-warning alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert">X</button>
+                            <h5><i class="icon fas fa-info"></i> Info</h5>
+                            <p><?= $errorMessage; ?></p>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="card-footer">
                         <input 

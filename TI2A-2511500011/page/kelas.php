@@ -50,8 +50,9 @@ if (isset($_GET['action'])) {
                         $no = 0;
                         $query = mysqli_query($koneksi, "SELECT * FROM kelas");
 
-                        while ($result = mysqli_fetch_array($query)) {
-                            $no++;
+                        if ($query) {
+                            while ($result = mysqli_fetch_array($query)) {
+                                $no++;
                         ?>
                             <tr>
                                 <td><?= $no; ?></td>
@@ -67,7 +68,8 @@ if (isset($_GET['action'])) {
                                     </a>
                                 </td>
                             </tr>
-                        <?php } ?>
+                        <?php }
+                        } ?>
                     </tbody>
 
                 </table>

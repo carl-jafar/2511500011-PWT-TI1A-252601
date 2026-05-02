@@ -87,7 +87,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">Muhammad Haikal</a>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link active">
+            <a href="index.php?page=master" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 MASTER
@@ -118,25 +118,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="index.php?page=guru" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Laman Guru</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="index.php?page=siswa" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Laman Siswa</p>
                 </a>
               </li>
                             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="index.php?page=kelas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Laman Kelas</p>
                 </a>
               </li>
                             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="index.php?page=jadwal" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Laman Jadwal</p>
                 </a>
@@ -153,11 +153,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="index.php?page=jadwal" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Jadwal</p>
-                </a>
-              </li>
                 </a>
               </li>
             </ul>
@@ -180,48 +178,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Starter Page</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Starter Page</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    <?php
+      $page = $_GET['page'] ?? 'dashboard';
+      $allowedPages = [
+        'dashboard', 'guru', 'siswa', 'kelas', 'mapel', 'jadwal',
+        'tambah_guru', 'tambah_siswa', 'tambah_kelas', 'tambah_mapel',
+        'edit_guru', 'edit_siswa', 'edit_kelas', 'edit_mapel',
+        'ganti_password'
+      ];
 
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">dashboard</h5>
-
-                <p class="card-text">
-                  Selamat Datang di Website Highschool DXD
-                </p>
-
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
+      if (in_array($page, $allowedPages, true) && file_exists("page/{$page}.php")) {
+          include "page/{$page}.php";
+      } else {
+          include 'page/dashboard.php';
+      }
+    ?>
   </div>
   <!-- /.content-wrapper -->
 

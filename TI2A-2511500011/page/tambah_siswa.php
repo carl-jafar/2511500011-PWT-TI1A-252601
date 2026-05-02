@@ -9,6 +9,8 @@
 </div>
 
 <?php
+$errorMessage = '';
+
 // Kode otomatis
 $carikode = mysqli_query($koneksi, "SELECT MAX(nis) FROM siswa") or die(mysqli_error($koneksi));
 $datakode = mysqli_fetch_array($carikode);
@@ -26,30 +28,35 @@ $_SESSION["KODE"] = $hasilkode;
 
 // Proses simpan
 if (isset($_POST['tambah'])) {
-    $nis = $_POST['nis'];
-    $nm_siswa = $_POST['nm_siswa'];
-    $jenkel = $_POST['jenkel'];
-    $hp = $_POST['hp'];
-    $kelas = $_POST['kelas'];
+    $nis = trim($_POST['nis']);
+    $nm_siswa = trim($_POST['nm_siswa']);
+    $jenkel = trim($_POST['jenkel']);
+    $hp = trim($_POST['hp']);
+    $kelas = trim($_POST['id_kelas']);
 
-    $insert = mysqli_query($koneksi, "INSERT INTO siswa VALUES ('$nis', '$nm_siswa', '$jenkel', '$hp', '$kelas')");
-    $insertUser = mysqli_query($koneksi, "INSERT INTO users (username, password, role) VALUES ('$nis', '1234', 'siswa')");
-
-    if ($insert) {
-        echo '
-        <div class="alert alert-info alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Berhasil Disimpan</h4>
-        </div>';
-        echo '<meta http-equiv="refresh" content="1;url=index.php?page=siswa">';
+    if ($nm_siswa === '' || $jenkel === '' || $hp === '' || $kelas === '') {
+        $errorMessage = 'Semua field wajib diisi.';
     } else {
-        echo '
-        <div class="alert alert-warning alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Gagal Disimpan</h4>
-        </div>';
+        $insert = mysqli_query($koneksi, "INSERT INTO siswa (nis, nm_siswa, jenkel, hp, id_kelas) VALUES ('$nis', '$nm_siswa', '$jenkel', '$hp', '$kelas')");
+
+        if ($insert) {
+            $insertUser = mysqli_query($koneksi, "INSERT INTO users (username, password, role) VALUES ('$nis', '1234', 'siswa')");
+
+            if (!$insertUser) {
+                $errorMessage = 'Gagal membuat user: ' . mysqli_error($koneksi);
+            } else {
+                echo '
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">X</button>
+                    <h5><i class="icon fas fa-info"></i> Info</h5>
+                    <h4>Berhasil Disimpan</h4>
+                </div>';
+                echo '<meta http-equiv="refresh" content="1;url=index.php?page=siswa">';
+                exit;
+            }
+        } else {
+            $errorMessage = 'Gagal Disimpan: ' . mysqli_error($koneksi);
+        }
     }
 }
 ?>
@@ -100,9 +107,17 @@ if (isset($_POST['tambah'])) {
                             class="form-control">
                     </div>
 
+                    <?php if (!empty($errorMessage)) : ?>
+                        <div class="alert alert-warning alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert">X</button>
+                            <h5><i class="icon fas fa-info"></i> Info</h5>
+                            <p><?= $errorMessage; ?></p>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="form-group">
-                        <label for="kelas">Kelas</label>
-                        <select class="form-control" name="kelas" id="kelas">
+                        <label for="id_kelas">Kelas</label>
+                        <select class="form-control" name="id_kelas" id="id_kelas">
                             <option disabled selected>-- Pilih Kelas --</option>
                             <?php
                             $query = mysqli_query($koneksi, "SELECT * FROM kelas");

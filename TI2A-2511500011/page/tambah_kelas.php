@@ -9,43 +9,29 @@
 </div>
 
 <?php
-// Kode otomatis
-$carikode = mysqli_query($koneksi, "SELECT MAX(id_kelas) FROM kelas") or die(mysqli_error($koneksi));
-$datakode = mysqli_fetch_array($carikode);
-
-if ($datakode) {
-    $nilaikode = substr($datakode[0], 2);
-    $kode = (int) $nilaikode;
-    $kode = $kode + 1;
-    $hasilkode = "K-" . str_pad($kode, 3, "0", STR_PAD_LEFT);
-} else {
-    $hasilkode = "K-001";
-}
-
-$_SESSION["KODE"] = $hasilkode;
+$errorMessage = '';
 
 // Proses simpan
 if (isset($_POST['tambah'])) {
-    $id_kelas = $_POST['id_kelas'];
-    $nm_kelas = $_POST['nm_kelas'];
+    $nm_kelas = trim($_POST['nm_kelas']);
 
-    $insert = mysqli_query($koneksi, "INSERT INTO kelas VALUES ('$id_kelas', '$nm_kelas')");
-
-    if ($insert) {
-        echo '
-        <div class="alert alert-info alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Berhasil Disimpan</h4>
-        </div>';
-        echo '<meta http-equiv="refresh" content="1;url=index.php?page=kelas">';
+    if ($nm_kelas === '') {
+        $errorMessage = 'Nama kelas tidak boleh kosong.';
     } else {
-        echo '
-        <div class="alert alert-warning alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">X</button>
-            <h5><i class="icon fas fa-info"></i> Info</h5>
-            <h4>Gagal Disimpan</h4>
-        </div>';
+        $insert = mysqli_query($koneksi, "INSERT INTO kelas (nm_kelas) VALUES ('$nm_kelas')");
+
+        if ($insert) {
+            echo '
+            <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">X</button>
+                <h5><i class="icon fas fa-info"></i> Info</h5>
+                <h4>Berhasil Disimpan</h4>
+            </div>';
+            echo '<meta http-equiv="refresh" content="1;url=index.php?page=kelas">';
+            exit;
+        } else {
+            $errorMessage = 'Gagal Disimpan: ' . mysqli_error($koneksi);
+        }
     }
 }
 ?>
@@ -61,11 +47,18 @@ if (isset($_POST['tambah'])) {
                         <label for="id_kelas">Kode kelas</label>
                         <input 
                             type="text" 
-                            name="id_kelas" 
-                            value="<?= $hasilkode; ?>" 
+                            value="Auto" 
                             class="form-control" 
                             readonly>
                     </div>
+
+                    <?php if (!empty($errorMessage)) : ?>
+                        <div class="alert alert-warning alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert">X</button>
+                            <h5><i class="icon fas fa-info"></i> Info</h5>
+                            <p><?= $errorMessage; ?></p>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="form-group">
                         <label for="nm_kelas">Nama kelas</label>
