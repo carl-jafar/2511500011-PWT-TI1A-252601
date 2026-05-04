@@ -18,6 +18,7 @@ if(isset($_POST['login'])) { // Cek tombol login
 
     if($userquerry) {
       $_SESSION['username'] = $Username; // Simpan session
+      $_SESSION['role'] = $userquerry['role']; // ✅ TAMBAHAN SAJA (tidak mengubah yang lain)
       header("location:index.php");
       exit();
     } else {

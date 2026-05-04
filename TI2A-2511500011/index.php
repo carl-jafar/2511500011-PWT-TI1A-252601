@@ -3,6 +3,7 @@
 session_start();
 require_once("config/koneksi.php");
 if(isset($_SESSION['username'])){
+  $role = $_SESSION['role'] ?? 'guest'; // Ambil role dari session
 ?>
 <!DOCTYPE html>
 <!--
@@ -63,6 +64,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </form>
         </div>
       </li>
+      <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
           <i class="fas fa-th-large"></i>
         </a>
@@ -108,6 +110,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+               
           <li class="nav-item">
             <a href="index.php?page=master" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -116,6 +119,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <?php if ($role === 'admin') : ?>
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="index.php?page=guru" class="nav-link active">
@@ -129,21 +133,79 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Laman Siswa</p>
                 </a>
               </li>
-                            <li class="nav-item">
+              <li class="nav-item">
+                <a href="index.php?page=mapel" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Laman Mapel</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="index.php?page=kelas" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Laman Kelas</p>
                 </a>
               </li>
-                            <li class="nav-item">
-                <a href="index.php?page=jadwal" class="nav-link">
+            </ul>
+          </li>
+          <?php endif; ?>
+
+          <?php if ($role === 'siswa') : ?>
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="right fas fa-angle-left"></i>
+              <p>
+                SISWA
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Laman Jadwal</p>
+                  <p>Profil</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Jadwal</p>
                 </a>
               </li>
             </ul>
           </li>
-                    <li class="nav-item">
+          <?php endif; ?>
+          <?php if ($role === 'guru') : ?>
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="right fas fa-angle-left"></i>
+              <p>
+                GURU
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Profil</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kelas</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Jadwal</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <?php endif; ?>
+
+          <li class="nav-item">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
